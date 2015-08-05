@@ -21,6 +21,8 @@ const (
 	version = "2.0.0"
 	tool    = "cookiescan"
 	usage   = `
+Parses and imports a cookiescan JSON file into a lair project.
+
 Usage:
   drone-cookiescan <id> <filename>
   export LAIR_ID=<id>; drone-cookiescan <filename>
@@ -66,7 +68,7 @@ func main() {
 		log.Fatalf("Fatal: Error parsing LAIR_API_SERVER URL. Error %s", err.Error())
 	}
 	if u.User == nil {
-		log.Fatal("Missing username and/or password")
+		log.Fatal("Fatal: Missing username and/or password")
 	}
 	user := u.User.Username()
 	pass, _ := u.User.Password()
@@ -128,10 +130,10 @@ func main() {
 	droneRes := &client.Response{}
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Fatal: Error %s", err.Error())
 	}
 	if err := json.Unmarshal(body, droneRes); err != nil {
-		log.Fatal(err)
+		log.Fatalf("Fatal: Could not unmarshal JSON. Error %s", err.Error())
 	}
 	if droneRes.Status == "Error" {
 		log.Fatalf("Fatal: Import failed. Error %s", droneRes.Message)
