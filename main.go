@@ -24,8 +24,8 @@ const (
 Parses and imports a cookiescan JSON file into a lair project.
 
 Usage:
-  drone-cookiescan <id> <filename>
-  export LAIR_ID=<id>; drone-cookiescan <filename>
+  drone-cookiescan [options] <id> <filename>
+  export LAIR_ID=<id>; drone-cookiescan [options] <filename>
 Options:
   -v              show version and exit
   -h              show usage and exit
