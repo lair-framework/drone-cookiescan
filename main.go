@@ -14,11 +14,11 @@ import (
 	"github.com/lair-framework/api-server/client"
 	"github.com/lair-framework/api-server/lib/ip"
 	"github.com/lair-framework/go-lair"
-	"github.com/tomsteele/cookiescan/result"
+	"github.com/tomsteele/cookiescan"
 )
 
 const (
-	version = "2.0.0"
+	version = "3.0.0"
 	tool    = "cookiescan"
 	usage   = `
 Parses and imports a cookiescan JSON file into a lair project.
@@ -101,26 +101,28 @@ func main() {
 			Command: "",
 		}},
 	}
-	r := cookiescan.Result{}
-	if err := json.Unmarshal(data, &r); err != nil {
+	results := []cookiescan.Result{}
+	if err := json.Unmarshal(data, &results); err != nil {
 		log.Fatalf("Fatal: Could not parse JSON. Error %s", err.Error())
 	}
 
-	ipaddr := net.ParseIP(r.Host)
-	host := lair.Host{
-		IPv4:         ipaddr.To4().String(),
-		LongIPv4Addr: ip.IpToInt(ipaddr.To4()),
-		Tags:         hostTags,
+	for _, r := range results {
+		ipaddr := net.ParseIP(r.Host)
+		host := lair.Host{
+			IPv4:         ipaddr.To4().String(),
+			LongIPv4Addr: ip.IpToInt(ipaddr.To4()),
+			Tags:         hostTags,
+		}
+		for _, p := range r.Services {
+			host.Services = append(host.Services, lair.Service{
+				Port:     p.Port,
+				Service:  p.Service,
+				Product:  "unknown",
+				Protocol: "tcp",
+			})
+		}
+		l.Hosts = append(l.Hosts, host)
 	}
-	for _, p := range r.Ports {
-		host.Services = append(host.Services, lair.Service{
-			Port:     p.Port,
-			Service:  p.Service,
-			Product:  "unkonwn",
-			Protocol: "tcp",
-		})
-	}
-	l.Hosts = append(l.Hosts, host)
 
 	res, err := c.ImportProject(&client.DOptions{ForcePorts: *forcePorts}, &l)
 	if err != nil {
