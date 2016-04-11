@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	version = "3.0.0"
+	version = "3.0.1"
 	tool    = "cookiescan"
 	usage   = `
 Parses and imports a cookiescan JSON file into a lair project.
@@ -53,6 +53,9 @@ func main() {
 		log.Fatal("Fatal: Missing LAIR_API_SERVER environment variable")
 	}
 	lairPID := os.Getenv("LAIR_ID")
+	if lairPID == "" {
+		log.Fatal("Fatal: Missing LAIR_ID")
+	}
 	var filename string
 	switch len(flag.Args()) {
 	case 2:
