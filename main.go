@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	version = "3.0.0"
+	version = "3.0.1"
 	tool    = "cookiescan"
 	usage   = `
 Parses and imports a cookiescan JSON file into a lair project.
